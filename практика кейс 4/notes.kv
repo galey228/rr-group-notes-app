@@ -1,0 +1,97 @@
+#:import dp kivy.metrics.dp
+#:import MDIconButton kivymd.uix.button.MDIconButton
+#:import MDTopAppBar kivymd.uix.toolbar.MDTopAppBar
+#:import MDTextField kivymd.uix.textfield.MDTextField
+#:import MDRaisedButton kivymd.uix.button.MDRaisedButton
+#:import MDLabel kivymd.uix.label.MDLabel
+#:import MDScrollView kivy.uix.scrollview.ScrollView
+#:import MDBoxLayout kivy.uix.boxlayout.BoxLayout
+
+<NoteItem>:
+    orientation: 'horizontal'
+    size_hint_y: None
+    height: dp(70)
+    padding: dp(10)
+    spacing: dp(10)
+    
+    MDLabel:
+        text: root.title_text
+        font_style: 'Subtitle1'
+        halign: 'left'
+        
+    MDLabel:
+        text: root.date_text
+        font_style: 'Caption'
+        halign: 'right'
+        size_hint_x: 0.4
+
+    MDIconButton:
+        icon: 'pencil'
+        on_release: app.edit_note(root.note_id)
+
+    MDIconButton:
+        icon: 'delete'
+        on_release: app.delete_note(root.note_id)
+
+
+<MainScreen>:
+    MDBoxLayout:
+        orientation: 'vertical'
+        
+        MDTopAppBar:
+            title: "Заметки РР-Групп"
+            left_action_items: [["menu", lambda x: app.toggle_storage()]]
+            right_action_items: [["plus", lambda x: app.open_create_dialog()]]
+            
+        MDBoxLayout:
+            padding: dp(10)
+            spacing: dp(5)
+            size_hint_y: None
+            height: dp(60)
+            
+            MDTextField:
+                id: search_field
+                hint_text: "Поиск по заголовку..."
+                on_text: app.search_notes(self.text)
+                
+        MDScrollView:
+            MDList:
+                id: notes_container
+
+        MDLabel:
+            id: storage_label
+            text: "Хранилище: SQLite"
+            halign: 'center'
+            size_hint_y: None
+            height: dp(30)
+            font_style: 'Caption'
+
+
+<CreateDialogContent>:
+    orientation: 'vertical'
+    spacing: dp(15)
+    padding: dp(15)
+    size_hint_y: None
+    height: dp(350)
+    
+    MDTextField:
+        id: title_field
+        hint_text: "Заголовок"
+        
+    MDTextField:
+        id: date_field
+        hint_text: "Дата (ГГГГ-ММ-ДД)"
+        
+    MDTextField:
+        id: time_field
+        hint_text: "Время (ЧЧ:ММ)"
+        
+    MDTextField:
+        id: content_field
+        hint_text: "Содержание"
+        multiline: True
+        
+    MDRaisedButton:
+        text: "Сохранить"
+        pos_hint: {"center_x": .5}
+        on_release: app.save_note_from_dialog()
